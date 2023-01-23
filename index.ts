@@ -1,44 +1,38 @@
-function ValidarCPF(cpf: string){
-  let calcularDigitos: number = 0;
-  for(let c: number = 0; c < 9; c++){
+function CalcularDigitos(cpf: string, pulos: number) {
+  let CalcularDigitos: number = 0;
+  for(let c: number = 0; c < pulos; c++){
     let numero = parseFloat(cpf[c]) * (c+1);
-    calcularDigitos += numero;
+    CalcularDigitos += numero;
   }
-  let primeirodigitoVerificador: number = calcularDigitos % 11;
-  calcularDigitos = 0;
-  for(let c: number = 0; c < 10; c++){
-    let numero = parseFloat(cpf[c]) * c;
-    calcularDigitos += numero;
-  }
-  let segundoDigitoVerificador: number = calcularDigitos % 11;
-  if(parseFloat(cpf[9]) == primeirodigitoVerificador && parseFloat(cpf[10]) == segundoDigitoVerificador){
-    console.log(`O CPF ${cpf} é valido!`);
-  }
-  else{
-    console.log(`O CPF ${cpf} é invalido!`);
-    }
+  let DigitoVerificador: number = CalcularDigitos % 11;
+  if(DigitoVerificador == 10) DigitoVerificador = 0;
+  return DigitoVerificador;
 }
+
+function ValidarCPF(cpf: string): boolean{
+  let primeirodigitoVerificador: number = CalcularDigitos(cpf, 9);
+  let segundoDigitoVerificador: number = CalcularDigitos(cpf, 10);
+  
+  if(+cpf[9] == primeirodigitoVerificador && +cpf[10] == segundoDigitoVerificador) return true;
+  else return false;
+}
+  
 function GerarCPF(): string {
   let cpf: string = '';
   let numeros: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
   for (let i: number = 0; i < 9; i++) {
     let index: number = Math.floor(Math.random() * numeros.length);
     cpf += numeros[index];
   }
-  let calcularDigitos: number = 0;
-  for (let c: number = 0; c < 9; c++) {
-    calcularDigitos += parseFloat(cpf[c]) * (c + 1);
-  }
-  let primeiroDigitoVerificador: number = calcularDigitos % 11;
-  calcularDigitos = 0;
+  let primeiroDigitoVerificador: number = CalcularDigitos(cpf, 9);
   cpf += primeiroDigitoVerificador.toString();
-  for (let c: number = 0; c < 10; c++) {
-    calcularDigitos += parseFloat(cpf[c]) * c;
-  }
-  let segundoDigitoVerificador: number = calcularDigitos % 11;
+  let segundoDigitoVerificador: number = CalcularDigitos(cpf, 10);
   cpf += segundoDigitoVerificador.toString();
-
   return cpf;
 }
-console.log(GerarCPF())
-ValidarCPF('');
+
+let CPFGerado: string = GerarCPF();
+let Validado: boolean = ValidarCPF(CPFGerado);
+
+console.log(`O CPF ${CPFGerado} é ${Validado}`);
